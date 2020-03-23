@@ -1,10 +1,10 @@
 package game
 import scala.util.Random
 
-class maze (val width: Int, val height: Int, val floors: Int){
+class maze (val height: Int, val width: Int, val floors: Int){
   
   var board = {
-    val a = Array.ofDim[cell](width, height)
+    val a = Array.ofDim[cell](height, width)
       for(i <- 0 until height){
         for(j <- 0 until width){
           a(i)(j) = new cell(i, j)
@@ -13,55 +13,65 @@ class maze (val width: Int, val height: Int, val floors: Int){
     a
   }
   
-  val a = Random.nextInt(width)
-  val b = Random.nextInt(height)
-  def randomCell = {
-    board(a)(b).setGround
-    board(a)(b)
+  val a = Random.nextInt(height)
+  val b = Random.nextInt(width)
+    
+  def isLegal(coords: (Int, Int)) = {
+    (coords._2 > 0 && coords._2 < this.width - 1) && (coords._1 > 0 && coords._1 < this.height - 1)
+    
   }
   
-  def isLegal(current: cell) = {
-    (current.x > 0 && current.x < this.width - 1) && (current.y > 0 && current.y < this.height - 1)
+  def inBetween(num1: Int, num2: Int):Int = {
+    if (num1 > num2) num1 - 1 
+    else if (num2 > num1) num2 - 1
+    else if(num1 == num2) num1
+    else num1
   }
-  
-  val first = randomCell
   
   var frontierList = List[cell]()
   def frontierCell (x: Int, y: Int) = {
-    var frontierList = List[cell]()
-    frontierList :+ board(x-2)(y) :+ board(x+2)(y) :+ board(x)(y-2) :+ board(x)(y+2)
-    frontierList.filter(_.isWall).filter(isLegal(_))(Random.nextInt(frontierList.size))
+    val coords = List[(Int, Int)]((x-2, y), (x+2, y), (x, y-2), (x, y+2)).filter(isLegal(_)).map(x => this.board(x._1)(x._2))
+    frontierList = coords ++ frontierList
+    frontierList.filter(!_.isPassable)
   }
   
   def neighbor (x: Int, y: Int) = {
     var neighborList = List[cell]()
-    neighborList :+ board(x-2)(y) :+ board(x+2)(y) :+ board(x)(y-2) :+ board(x)(y+2)
-    neighborList.filter(_.isGround).filter(isLegal(_))(Random.nextInt(neighborList.size))
+    val coords = List[(Int, Int)]((x-2, y), (x+2, y), (x, y-2), (x, y+2)).filter(isLegal(_)).map(x => this.board(x._1)(x._2))
+    neighborList = coords ++ neighborList
+    neighborList.filter(_.isPassable)
+    neighborList(Random.nextInt(neighborList.size))
   }
   
   def connectRandomNeighbor(x1: Int, y1: Int) = {
-    val a = frontierCell(x1, y1)
     val b = neighbor(x1, y1)
     
-    val x = math.max(a.x, b.x) - math.abs(a.x - b.x)
-    val y = math.max(a.y, b.y) - math.abs(a.y - b.y)
+    val x = inBetween(x1, b.x)
+    val y = inBetween(y1, b.y)
     
-    board(x)(y).setGround
+    board(x)(y).setPassable
+    board(x1)(y1).setPassable
     
-    val new_a = frontierCell(a.x, a.y)
+    frontierList = frontierCell(x1, y1)
     
-    frontierList.drop(frontierList.indexOf(a))
   }
  //algorythm attempt
-  val startX = first.x
-  val startY = first.y
   
   def Prim = {
-    var square = frontierCell(startX, startY)
-    while(frontierList.nonEmpty){
-      connectRandomNeighbor(square.x, square.y)
-      square = frontierList(Random.nextInt(frontierList.size))
+    val first = {
+      board(a)(b).setPassable
+      board(a)(b)
     }
+    var square = frontierCell(a, b)(Random.nextInt(frontierList.size))
+    connectRandomNeighbor(square.x, square.y)
+    frontierList = frontierList.take(frontierList.indexOf(square)) ++ frontierList.drop(frontierList.indexOf(square) + 1)
+    
+    while(frontierList.nonEmpty){
+      square = frontierList(Random.nextInt(frontierList.size))
+      connectRandomNeighbor(square.x, square.y)
+      frontierList = frontierList.take(frontierList.indexOf(square)) ++ frontierList.drop(frontierList.indexOf(square) + 1)
+      }
+    board
   }
 
 }

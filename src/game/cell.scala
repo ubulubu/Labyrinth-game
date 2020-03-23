@@ -2,14 +2,19 @@ package game
 
 class cell (val x:Int, val y:Int){
   
-  var isWall = true
+  var isPassable = false
   var isStaircase = false
   var isGoal = false
-  var isGround = false
   
-  def setGround = this.isGround = true
+  def setPassable = {
+    this.isPassable = true
+  }
 
-  def setStairs = this.isStaircase = true
+  def setStairs = {
+    this.isStaircase = true
+  }
   
-  def setGoal = this.isGoal = true
+  def setGoal = {
+    this.isGoal = true
+  }
 }

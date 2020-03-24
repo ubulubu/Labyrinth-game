@@ -1,3 +1,9 @@
 10.3
 Projekti on alustettu ja kirjastot jne on lisätty. En ole ehtinyt tehdä muuta vielä, kun muitakin hommia on riittänyt.
 Tarakoituksena olisi aloittaa työstää projektia tällä viikolla.
+
+24.3
+Generointialkorytmi toimii 2D:lle, labyrintin voi tulostaa tekstinä (ei käsittele virheellistä inputtia vielä). 
+Yllättävän paljon oon saanut aikaan pienehköllä työmäärällä.
+Luokkarakennetta muunneltu verrattuna alkuperäiseen suunnitelmaan. Erilaiset cellit on laitettu attribuuteiksi.
+Projektia on tullut tehtyä viime raportista noin 10h.

@@ -17,4 +17,7 @@ class cell (val x:Int, val y:Int){
   def setGoal = {
     this.isGoal = true
   }
+  def setWall = {
+    this.isPassable = false
+  }
 }

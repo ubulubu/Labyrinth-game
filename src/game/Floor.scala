@@ -1,8 +1,8 @@
 package game
 import scala.util.Random
 import scala.collection.mutable.Buffer
-class maze (val height: Int, val width: Int, val floors: Int){
-  
+
+class Floor (val height: Int, val width: Int) {
   // Generate maze with only walls
   var board = {
     val a = Array.ofDim[cell](height, width)
@@ -16,6 +16,7 @@ class maze (val height: Int, val width: Int, val floors: Int){
   
   val a = Random.nextInt(height - 2) + 1
   val b = Random.nextInt(width - 2) + 1
+  
   // Helper method for checking valid coordinates  
   def isLegal(coords: (Int, Int)) = {
     (coords._2 > 0 && coords._2 < this.width - 1) && (coords._1 > 0 && coords._1 < this.height - 1)
@@ -57,13 +58,17 @@ class maze (val height: Int, val width: Int, val floors: Int){
     
     this.board(x)(y).setPassable
     }
- //algorythm attempt
+ //algorithm attempt
   
-  def Prim = {
-    val first = {
+  val first = {
       this.board(a)(b).setPassable
+      this.board(a)(b).setStart
       this.board(a)(b)
     }
+  //placeholder
+  var goal = this.board(0)(0)
+  
+  def prim = {
     var i = 0
     var square = frontierCell(first.x, first.y)(Random.nextInt(frontierList.size))
     connectRandomNeighbor(square.x, square.y)
@@ -71,7 +76,7 @@ class maze (val height: Int, val width: Int, val floors: Int){
     this.frontierList = frontierCell(square.x, square.y)
     this.frontierList -= square
     
-    while(this.frontierList.nonEmpty){
+    while(this.frontierList.size > 1){
       square = frontierList(Random.nextInt(frontierList.size))
       this.frontierList = frontierCell(square.x, square.y)
       
@@ -80,8 +85,14 @@ class maze (val height: Int, val width: Int, val floors: Int){
       this.frontierList -= square
       //i += 1
       }
+    goal = this.frontierList.head
+    connectRandomNeighbor(goal.x, goal.y)
+    this.board(goal.x)(goal.y).setPassable
+    board(goal.x)(goal.y).setGoal
     this.board
   }
+  
+  
   var txt = {
     val a = Array.ofDim[String](height, width)
     for(i <- 0 until height){
@@ -95,12 +106,54 @@ class maze (val height: Int, val width: Int, val floors: Int){
   def toTxt = {
     for (i <- 0 until height){
       for(j <- 0 until width){
-        if(this.board(i)(j).isPassable) txt(i)(j) = " "
+        if (this.board(i)(j).isGoal) txt(i)(j) = "G"
+        else if (this.board(i)(j).isStart) txt(i)(j) = "S"
+        else if (this.board(i)(j).isSolution) txt(i)(j) = "."
+        //else if (this.board(i)(j).isVisited) txt(i)(j) = "x"
+        else if(this.board(i)(j).isPassable) txt(i)(j) = " "
         else txt(i)(j) = "#"
       }
     }
   txt
   }
-
-
+  
+  var path = Buffer[cell]()
+  val coordList = Buffer[(Int, Int)]((0, 1), (1, 0), (0, -1), (-1, 0))
+  
+  def explorer (coords: (Int, Int)): Boolean = {
+    if(!this.isLegal(coords) || !this.board(coords._1)(coords._2).isPassable || this.board(coords._1)(coords._2).isVisited){
+      return false
+      }
+    
+    this.board(coords._1)(coords._2).setVisited
+    path += board(coords._1)(coords._2)
+    
+    if (this.board(coords._1)(coords._2).isGoal) {
+      return true
+    }
+    
+    for(dir <- coordList){
+      val coord = (coords._1 + dir._1, coords._2 + dir._2)
+      if(explorer(coord)) {
+        return true
+      }
+    
+    }
+    path = path.init
+    return false
+    
+  }
+  def solver = {
+    explorer(this.first.x, this.first.y)
+    for(i <- path){
+      this.board(i.x)(i.y).setSolution
+    }
+    val op = path.map(a => (a.x, a.y))
+    println(op.size)
+  }
+  def pooper = {
+    for(i <- path){
+      this.board(i.x)(i.y).setSolution
+    }
+  }
 }

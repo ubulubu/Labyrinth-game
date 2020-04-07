@@ -3,7 +3,14 @@ Projekti on alustettu ja kirjastot jne on lisätty. En ole ehtinyt tehdä muuta 
 Tarakoituksena olisi aloittaa työstää projektia tällä viikolla.
 
 24.3
-Generointialkorytmi toimii 2D:lle, labyrintin voi tulostaa tekstinä (ei käsittele virheellistä inputtia vielä). 
+Generointialkoritmi toimii 2D:lle, labyrintin voi tulostaa tekstinä (ei käsittele virheellistä inputtia vielä). 
 Yllättävän paljon oon saanut aikaan pienehköllä työmäärällä.
 Luokkarakennetta muunneltu verrattuna alkuperäiseen suunnitelmaan. Erilaiset cellit on laitettu attribuuteiksi.
 Projektia on tullut tehtyä viime raportista noin 10h.
+
+7.4
+Ratkaisualkoritmi toimii yksittäisille kerroksille. Sitä voidaan soveltaa koko labyrintin ratkaisemiseen jos jokaisella
+kerroksella on vain yhdet portaat jotka vievät seuraavalle kerrokselle (maali on ylimmässä kerroksessa ja startti alimmassa).
+Sama pätee generoinnille. Pitäisi vielä päättää millä idealla maali/portaat sijoitetaan. Seuraavaksi pitäisi työstää UI ja 
+keksiä toteutus pelaajan liikuttamiselle sekä save/load metodit. Projektia työstetty noin 8h viime raportista.
+Pitäisi kiristää tahtia nyt ettei tule hoppu.

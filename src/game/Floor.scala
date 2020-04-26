@@ -29,7 +29,7 @@ class Floor (val height: Int, val width: Int) {
       case 0 => num1
       case 2 => num2 + 1
       case -2 => num1 + 1
-      case _ => 213812831 // should throw error
+      case _ => 1234  // Should throw error
     }
   }
   // Helper method for Prim, calculates the frontiercells.
@@ -58,19 +58,18 @@ class Floor (val height: Int, val width: Int) {
     
     this.board(x)(y).setPassable
     }
- //algorithm attempt
+  //placeholder coordinates
+  var first = this.board(0)(0)
   
-  val first = {
-      this.board(a)(b).setPassable
-      this.board(a)(b).setStart
-      this.board(a)(b)
-    }
-  //placeholder
-  var goal = this.board(0)(0)
+    //placeholder coordinates
+  var last = this.board(2)(2)
   
-  def prim = {
-    var i = 0
-    var square = frontierCell(first.x, first.y)(Random.nextInt(frontierList.size))
+  def prim(a:Int, b:Int) = {
+    first = this.board(a)(b)
+    this.board(a)(b).setPassable
+    this.board(a)(b).setDown(true)
+    this.board(a)(b)
+    var square = frontierCell(a, b)(Random.nextInt(frontierList.size))
     connectRandomNeighbor(square.x, square.y)
     this.board(square.x)(square.y).setPassable
     this.frontierList = frontierCell(square.x, square.y)
@@ -83,13 +82,13 @@ class Floor (val height: Int, val width: Int) {
       connectRandomNeighbor(square.x, square.y)
       this.board(square.x)(square.y).setPassable
       this.frontierList -= square
-      //i += 1
+     
       }
-    goal = this.frontierList.head
-    connectRandomNeighbor(goal.x, goal.y)
-    this.board(goal.x)(goal.y).setPassable
-    board(goal.x)(goal.y).setGoal
-    this.board
+      last = this.frontierList.head
+      connectRandomNeighbor(last.x, last.y)
+      this.board(last.x)(last.y).setPassable
+      board(last.x)(last.y).setDown(true)
+      this.board
   }
   
   
@@ -107,9 +106,11 @@ class Floor (val height: Int, val width: Int) {
     for (i <- 0 until height){
       for(j <- 0 until width){
         if (this.board(i)(j).isGoal) txt(i)(j) = "G"
+        else if (this.board(i)(j).containsP) txt(i)(j) = "P"
         else if (this.board(i)(j).isStart) txt(i)(j) = "S"
+        else if (this.board(i)(j).isUp) txt(i)(j) = "/"
+        else if (this.board(i)(j).isDown) txt(i)(j) = raw"\"
         else if (this.board(i)(j).isSolution) txt(i)(j) = "."
-        //else if (this.board(i)(j).isVisited) txt(i)(j) = "x"
         else if(this.board(i)(j).isPassable) txt(i)(j) = " "
         else txt(i)(j) = "#"
       }
@@ -120,7 +121,8 @@ class Floor (val height: Int, val width: Int) {
   var path = Buffer[cell]()
   val coordList = Buffer[(Int, Int)]((0, 1), (1, 0), (0, -1), (-1, 0))
   
-  def explorer (coords: (Int, Int)): Boolean = {
+  // Helper for solving the floor
+  private def explorer (coords: (Int, Int)): Boolean = {
     if(!this.isLegal(coords) || !this.board(coords._1)(coords._2).isPassable || this.board(coords._1)(coords._2).isVisited){
       return false
       }
@@ -128,7 +130,7 @@ class Floor (val height: Int, val width: Int) {
     this.board(coords._1)(coords._2).setVisited
     path += board(coords._1)(coords._2)
     
-    if (this.board(coords._1)(coords._2).isGoal) {
+    if (this.board(coords._1)(coords._2).isTarget) {
       return true
     }
     
@@ -143,15 +145,9 @@ class Floor (val height: Int, val width: Int) {
     return false
     
   }
-  def solver = {
-    explorer(this.first.x, this.first.y)
-    for(i <- path){
-      this.board(i.x)(i.y).setSolution
-    }
-    val op = path.map(a => (a.x, a.y))
-    println(op.size)
-  }
-  def pooper = {
+  // solves the current floor
+  def solver (x: Int, y: Int)= {
+    explorer(x, y)
     for(i <- path){
       this.board(i.x)(i.y).setSolution
     }

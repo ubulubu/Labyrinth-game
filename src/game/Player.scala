@@ -1,5 +1,5 @@
 package game
 
-class Player(floor: Int, x: Int, y: Int) {
+class Player(var floor: Int, var x: Int, var y: Int) {
 
 }

@@ -6,7 +6,7 @@ import game._
 
 object playingArea extends SimpleSwingApplication{
   
-  var newGame = new labGame
+  var newGame = new LabGame
   
   val startButton = new Button("Start Game")
   val solveButton = new Button("Solve")
@@ -53,7 +53,7 @@ object playingArea extends SimpleSwingApplication{
       if(event.source == solveButton){
         newGame.solveThis
         outputArea.text = newGame.turnString
-        Dialog.showMessage(wholeLayout, "Solved!" + "\n" + "If this is a loaded maze, only a path to the next floor is showed instead", "Notification")
+        Dialog.showMessage(wholeLayout, "Solved!" + "\n" + "", "Notification")
       }
       else if (event.source == saveButton){
         val s = Dialog.showInput(wholeLayout,"Name the file, remember to put .txt at the end","Notification",Dialog.Message.Plain, Swing.EmptyIcon,Nil, "")
@@ -65,7 +65,7 @@ object playingArea extends SimpleSwingApplication{
         outputArea.text = newGame.turnString
       }
       else if (event.source == newGameButton){
-        newGame = new labGame
+        newGame = new LabGame
         outputArea.text = newGame.turnString
       }
     }

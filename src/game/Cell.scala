@@ -1,7 +1,7 @@
 package game
 
-class cell (val x:Int, val y:Int){
-  
+class Cell (val x:Int, val y:Int){
+  // states of the cell
   var isPassable = false
   var isUp = false
   var isDown = false
@@ -12,6 +12,7 @@ class cell (val x:Int, val y:Int){
   var isTarget = false
   var containsP = false
   
+  // methods to alter the states
   def setPassable = {
     this.isPassable = true
   }

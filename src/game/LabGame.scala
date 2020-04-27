@@ -1,18 +1,10 @@
 package game
 import scala.collection.mutable.Buffer
-import scala.swing._
-import scala.swing.event._
 import scala.util.Random
-import java.io.FileReader
-import java.io.FileNotFoundException
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.FileWriter
-import java.io.BufferedWriter
-import java.io.BufferedReader
 
-
-class labGame {
+class LabGame {
+  
+  private var giveUp = false
   
   private def newMaze(floors: Int, height: Int, width: Int) = {
     val a = Buffer[Floor]()
@@ -39,6 +31,7 @@ class labGame {
       val rand = Random.nextInt(100)
       if(rand > 97 && this.maze.floors(0).board(i)(j).isPassable && this.maze.floors(1).board(i)(j).isPassable && !this.maze.floors(0).board(i)(j).isUp && !this.maze.floors(0).board(i)(j).isGoal){
         this.maze.floors(0).board(i)(j).setUp(true)
+        this.maze.floors(0).board(i)(j).setTarget
         this.maze.floors(1).board(i)(j).setDown(true)
       }   
       }
@@ -48,6 +41,7 @@ class labGame {
       val rand = Random.nextInt(100)
       if(rand > 97 && this.maze.floors(1).board(i)(j).isPassable && this.maze.floors(2).board(i)(j).isPassable && !this.maze.floors(1).board(i)(j).isUp && !this.maze.floors(0).board(i)(j).isGoal){
         this.maze.floors(1).board(i)(j).setUp(true)
+        this.maze.floors(1).board(i)(j).setTarget
         this.maze.floors(2).board(i)(j).setDown(true)
   }
       }
@@ -63,6 +57,8 @@ class labGame {
     p.floor == (maze.floors.size - 1) && this.maze.floors(p.floor).board(p.x)(p.y).isGoal
   }
   
+  def isGivenUp = this.giveUp
+  
   //prints the whole maze
   private def printAll = {
     val txtMaze = maze.floors.map(_.toTxt)
@@ -77,6 +73,7 @@ class labGame {
       val txtmaze = maze.floors(p.floor).toTxt
       txtmaze.map(_.mkString).mkString("\n")
   }
+    else if (isGivenUp) "Nice Try :)"
     else "YOU WIN!"
   }
   
@@ -114,6 +111,9 @@ class labGame {
         else if (a(i)(j).toString == "P") {
           b(0).board(i)(j).setPlayer(true)
           b(0).board(i)(j).setPassable
+          p.x = i
+          p.y = j
+          p.floor = 0
         }
         else if (a(i)(j).toString == "S") b(0).board(i)(j).setStart
         else if (a(i)(j).toString == "/") {
@@ -130,7 +130,13 @@ class labGame {
           b(1).board(i - 31)(j).setGoal
           b(1).board(i - 31)(j).setTarget
         }
-        else if (a(i)(j).toString == "P") b(1).board(i - 31)(j).setPlayer(true)
+        else if (a(i)(j).toString == "P") {
+          b(1).board(i - 31)(j).setPlayer(true)
+          b(1).board(i - 31)(j).setPassable
+          p.x = i - 31
+          p.y = j
+          p.floor = 1
+        }
         else if (a(i)(j).toString == "S") b(1).board(i - 31)(j).setStart
         else if (a(i)(j).toString == "/") {
           b(1).board(i - 31)(j).setUp(true)
@@ -144,9 +150,16 @@ class labGame {
       for(j <- 0 until 50){
         if (a(i)(j).toString == "G") {
           b(2).board(i - 62)(j).setGoal
+          b(2).board(i - 62)(j).setTarget
           b(1).board(i - 62)(j).setTarget
         }
-        else if (a(i)(j).toString == "P") b(2).board(i - 62)(j).setPlayer(true)
+        else if (a(i)(j).toString == "P") {
+          b(2).board(i - 62)(j).setPlayer(true)
+          b(2).board(i - 62)(j).setPassable
+          p.x = i - 62
+          p.y = j
+          p.floor = 2
+        }
         else if (a(i)(j).toString == "S") b(2).board(i - 62)(j).setStart
         else if (a(i)(j).toString == "/") {
           b(2).board(i - 62)(j).setUp(true)
@@ -216,12 +229,11 @@ class labGame {
   
   //shows the solution to the maze
   def solveThis = {
-      var b = p.floor
-      maze.floors(p.floor).solver(p.x, p.y)
-      while(b <= this.maze.floors.size - 1 ){
-      maze.floors(b).solver(maze.floors(b).first.x, maze.floors(b).first.y)
-      b = b + 1
+    giveUp = true  
+    
+    val a = maze.floors(p.floor).solver(p.x, p.y)
+    val a2 = maze.floors(1).solver(maze.floors(1).solver(a.x, a.y).x, maze.floors(1).solver(a.x, a.y).y)
+    val a3 = maze.floors(2).solver(maze.floors(2).solver(a2.x, a2.y).x, maze.floors(2).solver(a2.x, a2.y).y)
+      
   }
-  }
-
 }

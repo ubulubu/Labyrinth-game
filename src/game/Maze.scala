@@ -10,11 +10,5 @@ class Maze (val floors: Buffer[Floor]){
     this.floors(2).prim(this.floors(1).last.x, this.floors(1).last.y)
     this
   }
-  
-  def printMaze = {
-    this.floors.map(_.toTxt)
-  }
-  
-  
-
+ 
 }

@@ -121,7 +121,7 @@ class LabGame {
           b(0).board(i)(j).setTarget
         }
         else if (a(i)(j).toString == raw"\") b(0).board(i)(j).setDown(true)
-        else if (a(i)(j).toString == " ") b(0).board(i)(j).setPassable
+        else if (a(i)(j).toString == " " || a(i)(j).toString == ".") b(0).board(i)(j).setPassable
       }
     }
     for (i <- 31 until 61){
@@ -143,7 +143,7 @@ class LabGame {
           b(1).board(i - 31)(j).setTarget
         }
         else if (a(i)(j).toString == raw"\") b(1).board(i - 31)(j).setDown(true)
-        else if (a(i)(j).toString == " ") b(1).board(i - 31)(j).setPassable
+        else if (a(i)(j).toString == " " || a(i)(j).toString == ".") b(1).board(i - 31)(j).setPassable
   }
   }
     for (i <- 62 until 92){
@@ -166,7 +166,7 @@ class LabGame {
           b(1).board(i - 62)(j).setTarget
         }
         else if (a(i)(j).toString == raw"\") b(2).board(i - 62)(j).setDown(true)
-        else if (a(i)(j).toString == " ") b(2).board(i - 62)(j).setPassable
+        else if (a(i)(j).toString == " " || a(i)(j).toString == ".") b(2).board(i - 62)(j).setPassable
     }
     }
     maze = new Maze(b)
